@@ -1,0 +1,16 @@
+/*
+ * CSS UI Notify v1 (Aug 29 2011)
+ * http://css-ui.com
+ *
+ * Copyright 2011, http://codeeverywhere.ca
+ * Licensed under the MIT license.
+ *
+ */
+.ui-notify{
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	background: green;
+	padding: 5px 10px;
+}

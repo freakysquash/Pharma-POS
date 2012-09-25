@@ -1,0 +1,402 @@
+/* 
+    Document   : ui-controls
+    Created on : 05 31, 12, 11:31:56 AM
+    Author     : jacob daniel fernandez
+    Description:
+        UI CONTROLS FOR myPharma POS
+*/
+
+/* -- login -- */
+.login {
+	margin:50px auto 10px auto;
+	width:441px;
+	height:260px;
+	overflow:hidden;
+	background:url('../images/login_bg.png') no-repeat;
+}
+.login form {
+	overflow:hidden;
+}
+.login form .lock {
+	margin:30px 58px 10px 0;
+	padding-left:34px;
+	line-height:35px;
+	float:right;
+	overflow:hidden;
+	font-size:24px;
+	font-weight:bold;
+	color:#666666;
+	background:url('../images/login_icon.png') no-repeat;
+}
+.field-group {
+	margin:15px auto 0 auto;
+	width:322px;
+	line-height:35px;
+	overflow:hidden;
+	font-size:18px;
+	color:#666666;
+}
+.login form label {
+	width:85px;
+	float:left;
+	clear:both;
+	text-align:right;
+}	
+.login form input[type=text] {
+	padding:0 10px 0 10px;
+	width:205px;
+	height:30px; line-height:30px;
+	float:right;
+	font-size:16px;
+}
+.login form input[type=password] {
+	padding:0 10px 0 10px;
+	width:205px;
+	height:30px; line-height:30px;
+	float:right;
+	font-size:16px;
+}
+.login form input[type=submit] {
+	margin:20px 60px 0 0;
+	width:151px;
+	height:33px;
+	float:right;
+	cursor:pointer;
+	overflow:hidden;
+	text-indent:-9999px;
+	font-size:16px;
+	border:none;
+	color:#666666;
+	background:url('../images/login_button.gif') no-repeat;
+} 
+
+/* CLOCK */
+
+.clock {margin:0 auto; padding:0; color:#222; }
+
+#Date { font-size:18px; margin: 0 20px 0 0; text-shadow:0 0 3px #333; }
+
+.clock ul {  margin:0 auto; padding:0px; list-style:none; text-align:center; }
+.clock ul li { display:inline; font-size:1em; margin:0 0 0 -15px; text-align:center; text-shadow:0 0 5px #333; }
+
+#point { position:relative; -moz-animation:mymove 1s ease infinite; -webkit-animation:mymove 1s ease infinite; padding-left:10px; padding-right:10px; }
+
+/* Simple Animation */
+@-webkit-keyframes mymove 
+{
+0% {opacity:1.0; text-shadow:0 0 20px #ccc;}
+50% {opacity:0; text-shadow:none; }
+100% {opacity:1.0; text-shadow:0 0 20px #ccc; }	
+}
+
+@-moz-keyframes mymove 
+{
+0% {opacity:1.0; text-shadow:0 0 20px #ccc;}
+50% {opacity:0; text-shadow:none; }
+100% {opacity:1.0; text-shadow:0 0 20px #ccc; }	
+}
+
+/*-------------------------------------------------*/
+
+.errorMessage {
+    color: #4c1215; 
+    background: #f2837f; 
+	padding: 7px 0;
+    margin:15px 0 0 0;
+	border: 1px solid #c1575c;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+    text-align:center;
+}
+
+/* CASHIER */
+
+.cashier-top-block span.customer-block-text {
+    font-weight:bold;
+    font-size:20px;
+    margin:10px 0 0 10px;
+    width:150px;
+    margin-right: 5px;
+    display:inline-block;
+}
+.cashier-top-block span.customer-block-name {
+    font-size:18px;
+}
+
+.totalAmount span.text {
+    font-size:20px;
+    line-height: 20px;
+    margin:10px 0 0 0;
+    font-weight:bold;
+    display:block;
+}
+
+.totalAmount span.amount{
+    font-size:38px;
+    margin:10px 0 0 0;
+    display:block;
+    float:right;
+}
+
+/* LINKS */
+
+a {
+    text-decoration: none;
+    color:#357EEA;
+    outline: 0;
+}
+
+a:hover {
+    text-decoration: underline;
+    color:#c00;
+}
+
+a.button-link {
+   -moz-border-radius: 10px;
+  -moz-box-shadow: #333 0px 0px 5px;
+  -moz-transition: all 0.5s ease;
+  -ms-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  -webkit-border-radius: 10px;
+  -webkit-box-shadow: #6E7849 0 0 10px;
+  -webkit-transition: all 0.5s ease;
+  background-color: #f7f7f7;
+  background-image: -moz-linear-gradient(90deg, #a6a6a6, #f7f7f7);
+  background-image: -ms-linear-gradient(90deg, #a6a6a6, #f7f7f7);
+  background-image: -o-linear-gradient(90deg, #a6a6a6, #f7f7f7);
+  background-image: -webkit-linear-gradient(90deg, #a6a6a6, #f7f7f7);
+  background-image: linear-gradient(90deg, #a6a6a6, #f7f7f7);
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  color: #333;
+  display: inline-block;
+  margin: auto;
+  text-decoration: none;
+  text-shadow: #ccc 5px 5px 10px;
+  transition: all 0.5s ease;
+}
+
+a.button-link:hover {
+  padding:0;
+}
+
+/* DIALOG */
+
+.ui-dialog-form form div {
+    margin: 0 0 15px 0;
+}
+
+.ui-dialog-form form input[type="text"] {
+    width:100%;
+}
+
+.ui-shadow {
+    -moz-box-shadow:0px 1px 0 rgba(255,255,255,.3);
+    -webkit-box-shadow:0px 1px 0 rgba(255,255,255,.3);
+    box-shadow:0px 1px 0 rgba(255,255,255,.3);
+}
+
+.ui-dialog-form form label.inline {
+    float:left;
+    width:150px;
+    margin-right:10px;
+    font-weight:bold;
+    margin: 0 0 10px 0;
+}
+
+.ui-dialog-form form input[type="text"].no-border-textbox {
+    border:none;
+    width:150px;
+    text-align: right;
+    margin: -5px 0 10px 0;
+}
+.ui-dialog-form form input[type="submit"]{
+    width:100%;
+}
+
+.ui-dialog-form form .submit button {
+    width:100%;
+}
+
+/* LISTVIEW MENU */
+
+.nav { display: block; width: 100%; border-right:1px solid #ccc; }
+
+.nav ul.listview { list-style: none;}
+
+.nav ul.listview li { 
+	border-bottom: 1px solid #d9e2eb; 
+	display: block;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ffffff) to(#ecf1f5));
+	background-image: -webkit-linear-gradient(top, #ffffff, #ecf1f5);
+	background-image:    -moz-linear-gradient(top, #ffffff, #ecf1f5);
+	background-image:      -o-linear-gradient(top, #ffffff, #ecf1f5);
+	background-image:         linear-gradient(top, #ffffff, #ecf1f5); 
+}
+
+.nav ul.listview li:hover {
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ecf1f5) to(#E0E0E0));
+	background-image: -webkit-linear-gradient(top, #ecf1f5, #E0E0E0);
+	background-image:    -moz-linear-gradient(top, #ecf1f5, #E0E0E0);
+	background-image:      -o-linear-gradient(top, #ecf1f5, #E0E0E0);
+	background-image:         linear-gradient(top, #ecf1f5, #E0E0E0);
+}
+
+.nav ul.listview li a { 
+	display: block;
+	width: 100%;
+	padding: 10px 10px; 
+	text-decoration: none; 
+	font-size:14px;
+	overflow: hidden;
+    color:#333;
+}
+.nav ul.listview li a:hover { color: #09f; }
+
+
+
+.nav ul.listview li a:hover::after { border-color: #c3ca80; }
+
+.nav ul li.head, ul.listview li.head {
+	height: 30px; 
+	color: #fff; 
+	line-height: 30px; 
+	padding-left: 15px;
+	background:#c00;
+}
+
+.manage-workspace {
+    margin:10px 0 0 0;
+}
+
+/* REPORTS */
+
+.reports {
+    margin:10px;
+}
+
+.reports table {
+    border:2px solid #ccc;
+    border-collapse: collapse;
+    width:100%;
+}
+
+.reports table thead td {
+    border:2px solid #ccc;
+    font-size:18px;
+    font-weight:bold;
+    padding:10px;
+}
+
+.reports table tbody td {
+    padding:6px;
+    border:1px solid #ccc;
+}
+
+.reports table td.actions {
+    text-align:center;
+}
+
+.ui-tabs-panel {
+    border:none;
+}
+
+.report-generated {
+    
+}
+
+.report-generated .report-header .title {
+    font-weight:bold;
+    font-size:28px;
+    margin: 0 0 20px;
+}
+
+.report-generated .report-header .item-desc, .report-date-range {
+    margin: 0 0 10px 0;
+}
+
+.report-generated .report-summary {
+    margin: 0 0 10px 0;
+}
+
+.report-generated .report-summary span {
+    margin: 0 0 5px 0;
+}
+
+.report-generated .report-summary span.title {
+    display:inline-block;
+    width:200px;
+    margin-right:20px;
+}
+
+em {
+    font-style: italic;
+}
+
+
+/* UI FORM */
+
+.custom-form form label {
+    display:block;
+    font-size:16px;
+    margin: 0 0 5px 0;
+}
+
+.custom-form form input[type="text"], input[type="password"], textarea, select {
+    padding:4px;
+    width:90%;
+    font-size:14px;
+    margin:0 0 20px 0;
+    border:1px solid #ccc;
+}
+
+.custom-form form textarea {
+    resize:none;
+    vertical-align: top;
+    height:80px;
+    overflow: auto;
+}
+
+.custom-form form input[type="submit"]{
+    padding:10px 30px;
+    font-size: 14px;
+    border:none;
+    background:url('../images/right_button_bg.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.custom-form form div.submit {
+    text-align: right;
+    margin-right: 30px;
+}
+
+.uom select {
+    width:60px;
+    padding:3px;
+}
+
+.uom #quantity {
+    width:50px;
+    padding:4px;
+}
+
+#prompt {
+    width:90%;
+    text-align:center;
+    margin: 0 0 20px 0;
+}
+
+.ajaxLoad {
+    margin:200px auto;
+}
+
+.ui-state-error {
+    padding:10px;
+    width:100%;
+}
+
+.selected {
+    color:#c00;
+}
