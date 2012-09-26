@@ -474,7 +474,7 @@
         $query = mysql_query("SELECT * FROM transaction_header WHERE transaction_no = '$transNo' AND remarks IN('Pending', 'OnHold') ORDER BY id DESC") or die(mysql_error());
         return $query;
     }
-    
+
     function getOnHoldHeaderByTransNoEntry($transNo){
         $query = mysql_query("SELECT * FROM transaction_header WHERE transaction_no = '$transNo' AND remarks = 'OnHold'") or die(mysql_error());
         return $query;
@@ -556,7 +556,7 @@
     }
     
     function holdTransaction($transNo){
-         mysql_query("UPDATE transaction_header SET remarks = 'OnHold' WHERE transaction_no = '$transNo'") or die(mysql_error());
+         mysql_query("UPDATE transaction_header SET remarks = 'OnHold' WHERE transaction_no = '$transNo' AND remarks != 'Removed'") or die(mysql_error());
     }
     
     function cancelAllItems($transNo){
@@ -1115,6 +1115,12 @@
     function getCompanyDetails(){
         $query = mysql_query("SELECT * FROM company") or die(mysql_error());
         return $query;
+    }
+    
+    function getCompanyName(){
+        $query = mysql_query("SELECT company_name FROM company") or die(mysql_error());
+        $c = mysql_fetch_assoc($query);
+        return $c["company_name"];
     }
     
     function addStore($code, $branch, $address1, $address2){

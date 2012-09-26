@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en"> 
 	<head>
-        <title>my Pharma POS<?php if(isset($_GET["module"])){ echo " | " . ucwords($_GET["module"]); } ?></title>
+        <title>POS<?php if(isset($_GET["module"])){ echo " | " . ucwords($_GET["module"]); } ?></title>
         <link rel="shortcut icon" href="http://<?php echo ROOT; ?>/template/images/favicon.ico"/>  
         <link type="text/css" rel="stylesheet" href="http://<?php echo ROOT; ?>/template/styles/reset.css"/>
         <link type="text/css" rel="stylesheet" href="http://<?php echo ROOT; ?>/template/styles/aristo.css"/>
@@ -87,45 +87,49 @@
             })
         </script>
     </head>
-    <body>
-        <div class="header-wrapper">
-            <div class="header container_24">
-                <div class="grid_6 alpha logo">
-                                <a href="/"><h3>my pharma pos</h3></a>
-                </div>
-                <div class="grid_4 user-nav push_14 omega">
-                    <?php
-                        if(isset($_SESSION["userId"])){
-                    ?>
-                    <ul>
-                        <li><a href="#" id="c8f717eee724806566e3ec2a90e07779"><?php echo $_SESSION["username"]; ?></a></li>
-                        <li><span style="color:#f0f0f0;"> | </span></li>
-                        <li><a href="http://<?php echo ROOT; ?>/app/users/logout.php">Logout</a></li>
-                    </ul>
-                    <?php
-                        }
-                    ?>
-                </div>
-            </div>
-        </div>
-        <div class="top-wrapper">
-                <div class="top container_24">
-                    <?php
-                        if(isset($_SESSION["userId"])){
-                    ?>
-                    <ul>
-                        <li><a href="/?module=cashier" id="cashierMenu" class="main-menu">Cashier</a></li>
-                        <li><a href="/?module=transactions" id="transactionsMenu" class="main-menu">Transactions</a></li>
-                        <li><a href="/?module=manage&page=inventory" id="inventoryMenu" class="main-menu">Inventory</a></li>
-                         <li><a href="/?module=customers" id="customersMenu" class="main-menu">Customers</a></li>
-                        <li><a href="/?module=reports" id="reportsMenu" class="main-menu">Reports</a></li>
-                        <li class="last-main-menu"><a href="/?module=manage" id="managerMenu" class="main-menu">Manager</a></li>
-                    </ul>
-                    <?php
-                        }
-                    ?>
-                </div>
-            </div>
-        </div>
-        <div class="content-wrapper">
-            <div class="content-block container_24">
+    <body>    
+        <div id="container">
+			<div id="header_wrapper">
+				<div id="header">
+					<div class="header_top">
+						<div class="logo">Point of Sale</div> <!-- Point of Sale logo -->
+						<!-- navigation start -->
+						<div class="nav">
+                            <?php
+                                if(isset($_SESSION["userId"])){
+                            ?>
+							<ul>
+								<li class="current"><a href="/?module=cashier">Cashier</a></li>
+								<li><a href="/?module=transactions">Transactions</a></li>
+								<li><a href="/?module=manage&page=inventory">Inventory</a></li>
+								<li><a href="/?module=customers">Customers</a></li>
+								<li><a href="/?module=reports">Reports</a></li>
+								<li><a href="/?module=manage">Manager</a></li>
+							</ul>
+                             <?php
+                                }
+                            ?>
+						</div>
+						<!-- navigation end -->
+					</div>
+					<div class="header_bottom">
+						<h1 class="title"><?php if(isset($_SESSION["userId"])){ echo getCompanyName(); } ?></h1>
+						<div class="user_action ">
+                            <?php
+                                if(isset($_SESSION["userId"])){
+                            ?>
+							<ul>
+								<li><a href="#" id="c8f717eee724806566e3ec2a90e07779"><?php echo $_SESSION["username"]; ?></a></li> <!-- User -->
+								<li><a href="http://<?php echo ROOT; ?>/app/users/logout.php" id="logout">Logout</a></li> <!-- Logout -->
+							</ul>
+                            <?php
+                                }
+                            ?>
+						</div>
+					</div>
+					<!-- navigation end -->
+				</div>
+			</div>
+			<!-- body content start -->
+			<div class="content_wrapper">
+				<div class="content">

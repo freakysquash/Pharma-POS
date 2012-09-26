@@ -99,7 +99,7 @@
         $(".editItemEntry").attr("data-id", $(this).attr("data-id"));
         $(".removeItemEntry").attr("data-id", $(this).attr("data-id"));
         $(".applyDiscount").attr("data-id", $(this).attr("data-id"));
-        $("ui-dialog-title").text($(this).parent().siblings("input[name=enteredDescription]").val());
+        $("ui-dialog-title").text($(this).parent().siblings(".enteredDescription").text());
         
         $.getJSON("/app/cashier/checkEntryDiscount.php?i=" + $(this).attr("data-id"), function(data){
             if(data.entryDiscount > 0){
@@ -358,6 +358,11 @@
         background-image: linear-gradient(to bottom, #F0F0F0 0%, #E3DEDE 100%);
         border:1px solid #ccc;
     }
+    
+    .entryItemImage {
+        height:30px;
+        width:30px;
+    }
 </style>
 
 <?php
@@ -365,13 +370,13 @@
         $entryData = getHeaderByTransNoEntry($_GET["t"]);
         while($entry = mysql_fetch_assoc($entryData)){
 ?>
-<div class="enteredItemsRow grid_12">
+<div class="enteredItemsRow grid_16">
     <input type="hidden" name="itemEntryId" value="<?php echo $entry["id"]; ?>"/>
     <input type="hidden" name="entryTransNo" value="<?php echo $entry["transaction_no"]; ?>"/>
     <input type="hidden" name="stockChecker" data-stock="<?php echo getStockOnHandBySku($entry["sku"]) ?>" data-reorder="<?php echo getStockReorderMinBySku($entry["sku"]); ?>"/>
-    <input type="text" class="enteredDescription" name="enteredDescription" readonly="readonly" value="<?php echo $entry["description"]; ?>"/>
-    <input type="text" class="enteredQuantity" name="enteredQuantity" value="<?php echo $entry["quantity"]; ?>"/>
-<!--    <input type="checkbox" class="toggleEntryTax" name="toggleEntryTax" data-tax="<?php //echo $entry["tax_amount"]; ?>" id="<?php //echo $entry["id"]; ?>"/>-->
+    <img src="http://<?php echo ROOT; ?>/app/manage/items/image.php?s=<?php echo $entry["sku"]; ?>" class="entryItemImage"/>
+    <span class="enteredDescription"><a href="#"><?php echo $entry["description"]; ?></span></span>
+    <input type="text" class="enteredQuantity" name="enteredQuantity" readonly="readonly" value="<?php echo $entry["quantity"]; ?>"/>
     <input type="text" class="enteredAmount" name="enteredAmount" value="<?php echo sprintf("%.2f", $entry["total_amount"]); ?>"/>
     <input type="hidden" name="flatAmount" value="<?php echo $entry["price"]; ?>"/>
     <button class="entryItemsControl" data-id="<?php echo $entry["id"]; ?>">Menu</button>

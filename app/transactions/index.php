@@ -155,7 +155,7 @@
                             <td><?php echo $trans["total_amount"]; ?></td>
                             <td><?php echo $trans["system_date"]; ?></td>
                             <td><?php echo $trans["system_time"]; ?></td>
-                            <td><a href="http://<?php echo $_SERVER["HTTP_HOST"]; ?>/app/cashier/recall.php?t=<?php echo $transNo; ?>" class="button">Recall</a></td>
+                            <td><a href="http://<?php echo $_SERVER["HTTP_HOST"]; ?>/?module=cashier&t=<?php echo $transNo; ?>" class="button">Recall</a></td>
                         </tr>
                 <?php
                                 }

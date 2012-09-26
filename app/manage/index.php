@@ -169,16 +169,16 @@
                 break;
         }
         
-        var windowHeight = $(".content-block").height() - 35;
+        var windowHeight = $(".content").height() - 35;
         $(".navigation").css({ "height" : windowHeight + "px"});
         
-        $(".nav").accordion({
+        $(".navaccord").accordion({
             icons: false,
             fillSpace:true
         });
         
         if($(document).getUrlParam("page") == "inventory"){
-            $(".nav").accordion({
+            $(".navaccord").accordion({
                 active: 1
             })
         }
@@ -191,49 +191,46 @@
     })
 </script>
 
-<div class="window">
+
 <div class="window-title">
     <span>Manager</span>
 </div>
-<div class="window-content">
-    <div class="grid_6 alpha navigation">
-        <div class="nav">
-            <h3>Products</h3>
+<div class="grid_6 alpha navigation">
+    <div class="navaccord">
+        <h3>Products</h3>
+        <ul>
+            <li><a href="#" id="itemList" class="accordion-submenu">Item List</a></li>
+            <li><a href="#" id="addItem" class="accordion-submenu">Add Item</a></li>
+            <li><a href="#" id="departments" class="accordion-submenu">Departments</a></li>
+            <li><a href="#" id="categories" class="accordion-submenu">Categories</a></li>
+            <li><a href="#" id="manufacturers" class="accordion-submenu">Manufacturers</a></li>
+            <li><a href="#" id="brands" class="accordion-submenu">Brands</a></li>
+            <li><a href="#" id="addType" class="accordion-submenu">Types</a></li>
+            <li><a href="#" id="addPackaging" class="accordion-submenu">Packaging</a></li>
+            <li><a href="#" id="addMeasurement" class="accordion-submenu">Measurement</a></li>
+            <li><a href="#" id="addSupplier" class="accordion-submenu">Supplier</a></li>
+            <li><a href="#" id="addSalesTax" class="accordion-submenu">Sales Tax</a></li>
+            <li><a href="#" id="addDiscount" class="accordion-submenu">Discounts</a></li>
+            <li><a href="#" id="importItems" class="accordion-submenu">Import Item List</a></li>
+        </ul>
+        <h3>Inventory</h3>
             <ul>
-                <li><a href="#" id="itemList" class="accordion-submenu">Item List</a></li>
-                <li><a href="#" id="addItem" class="accordion-submenu">Add Item</a></li>
-                <li><a href="#" id="departments" class="accordion-submenu">Departments</a></li>
-                <li><a href="#" id="categories" class="accordion-submenu">Categories</a></li>
-                <li><a href="#" id="manufacturers" class="accordion-submenu">Manufacturers</a></li>
-                <li><a href="#" id="brands" class="accordion-submenu">Brands</a></li>
-                <li><a href="#" id="addType" class="accordion-submenu">Types</a></li>
-                <li><a href="#" id="addPackaging" class="accordion-submenu">Packaging</a></li>
-                <li><a href="#" id="addMeasurement" class="accordion-submenu">Measurement</a></li>
-                <li><a href="#" id="addSupplier" class="accordion-submenu">Supplier</a></li>
-                <li><a href="#" id="addSalesTax" class="accordion-submenu">Sales Tax</a></li>
-                <li><a href="#" id="addDiscount" class="accordion-submenu">Discounts</a></li>
-                <li><a href="#" id="importItems" class="accordion-submenu">Import Item List</a></li>
+                <li><a href="#" id="inventoryList" class="accordion-submenu">Inventory List</a></li>
+                <li><a href="#" id="inventoryCount" class="accordion-submenu">Update Inventory</a></li
+                <li><a href="/?module=purchase" class="accordion-submenu">Purchase Orders</a></li>
             </ul>
-            <h3>Inventory</h3>
-                <ul>
-                    <li><a href="#" id="inventoryList" class="accordion-submenu">Inventory List</a></li>
-                    <li><a href="#" id="inventoryCount" class="accordion-submenu">Update Inventory</a></li
-                    <li><a href="/?module=purchase" class="accordion-submenu">Purchase Orders</a></li>
-                </ul>
-            <h3>Configuration</h3>
-                <ul>
-                    <li><a href="#" id="company" class="accordion-submenu">Company</a></li>
-                    <li><a href="#" id="store" class="accordion-submenu">Store Setup</a></li>
-                    <li><a href="#" id="users" class="accordion-submenu">User Accounts</a></li>
-                </ul>
-            <h3>Reports</h3>
+        <h3>Configuration</h3>
             <ul>
-                <li><a href="http://<?php echo ROOT; ?>/?module=reports" id="reports" class="accordion-submenu">Generate Reports</a></li>
+                <li><a href="#" id="company" class="accordion-submenu">Company</a></li>
+                <li><a href="#" id="store" class="accordion-submenu">Store Setup</a></li>
+                <li><a href="#" id="users" class="accordion-submenu">User Accounts</a></li>
             </ul>
-        </div>
-    </div>
-    <div class="grid_18 omega manage-workspace">
-
+        <h3>Reports</h3>
+        <ul>
+            <li><a href="http://<?php echo ROOT; ?>/?module=reports" id="reports" class="accordion-submenu">Generate Reports</a></li>
+        </ul>
     </div>
 </div>
+<div class="grid_18 omega manage-workspace">
+
 </div>

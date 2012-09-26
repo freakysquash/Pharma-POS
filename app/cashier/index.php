@@ -1,13 +1,21 @@
 <?php
     authenticate();
-    if(isset($_SESSION["transNo"])){
-        $transNo = $_SESSION["transNo"];
-    }
-    else{
-        $transNo = newTransactionNo();
-        newTransaction($transNo);
+    
+    if(isset($_GET["t"])){
+        $transNo = $_GET["t"];
         $_SESSION["transNo"] = $transNo;
     }
+    else{
+        if(isset($_SESSION["transNo"])){
+            $transNo = $_SESSION["transNo"];
+        }
+        else{
+            $transNo = newTransactionNo();
+            newTransaction($transNo);
+            $_SESSION["transNo"] = $transNo;
+        }
+    }
+    
     if(isset($_SESSION["f5ebd1bab16ff5845411f18788c2ca1e"])){
         $lockStatus = $_SESSION["f5ebd1bab16ff5845411f18788c2ca1e"];
     }
@@ -73,9 +81,6 @@
         $("input[name=totalDiscount]").val(totalDiscount);
         $("#summaryDiscount").text(totalDiscount)
     })
-    $.getJSON("/app/cashier/lastItemEntry.php?t=" + transaction, function (data) {
-        $("#itemImage").attr("src", "http://<?php echo ROOT; ?>/app/manage/items/image.php?s=" + data.sku);
-    })
     $.getJSON("/app/cashier/getCustomer.php?t=" + transaction, function (data) {
         $("#activeCustomer").attr("data-code", data.code);
         $("#activeCustomer").text(data.customer);
@@ -117,9 +122,6 @@
                     $("input[name=totalDiscount]").val(totalDiscount);
                     $("#summaryDiscount").text(totalDiscount)
                 })
-                $.getJSON("/app/cashier/lastItemEntry.php?t=" + transaction, function (data) {
-                    $("#itemImage").attr("src", "http://<?php echo ROOT; ?>/app/manage/items/image.php?s=" + data.sku);
-                })
                 $.ajax({
                     type: "POST",
                     url: "/app/inventory/inventoryCountCheck.php",
@@ -134,15 +136,8 @@
                         }
                     }
                 })
-                
-                $("#itemImage").attr("src", "http://<?php echo ROOT; ?>/app/manage/items/image.php?s=" + sku);
             }
         })
-    });
-    
-    $(".back").click(function(){
-        parent.history.back();
-        return false;
     });
     
     $("input[name=enterItem]").removeClass("ui-button ui-corner-all ui-widget ui-state-default");
@@ -154,6 +149,7 @@
         var amount = parseFloat(price * quantity + tax).toFixed(2);
         $("input[name=amount]").val(amount)
     });
+    
     $("#cash").bind("keyup", function () {
         var cash = $("input[name=cash]").val();
         var tender = parseFloat(cash).toFixed(2);
@@ -170,6 +166,7 @@
             $("input[name=tenderSale]").val("Tender");
         }
     });
+    
     $("#tenderSale").click(function () {
         $("#tenderSaleDialog").dialog("open");
         $("input[name=tenderSale]").attr("disabled", "disabled");
@@ -181,6 +178,7 @@
             $("input[name=totalDiscount]").val(totalDiscount);
         })
     });
+    
     $("#tenderSaleDialog").dialog({
         title: "Tender Sale",
         autoOpen: false,
@@ -244,6 +242,7 @@
             }
         })
     });
+    
     $("#cancelTransaction").unbind("click").click(function(e) {
         e.preventDefault();
         $(this).attr("disabled", "disabled");
@@ -271,10 +270,12 @@
             }
         })
     });
+    
     $("#closeStore").click(function () {
         $("#closeStoreDialog").dialog("open");
         $("#closeStore").text("Open Store")
     });
+    
     $("#closeStoreDialog").dialog({
         title: "Close Store",
         autoOpen: false,
@@ -286,6 +287,7 @@
         buttons: false,
         draggable: false
     });
+    
     $("#holdTransaction").unbind("click").click(function(e) {
         e.preventDefault();
         $(this).attr("disabled", "disabled");
@@ -316,8 +318,6 @@
         })
     });
     
-    
-    
     $("#findItem").click(function () {
         $(".dataTables_filter input:text").addClass("findItemFilter");
         $("#findItemDialog").dialog("open");
@@ -327,6 +327,7 @@
             "bRetrieve":true
         });
     });
+    
     $("#findItemDialog").dialog({
         title: "Find Item",
         autoOpen: false,
@@ -538,41 +539,11 @@
             }
         })
     });
-    
-    $(function () {
-        var max = 1;
-        var checkboxes = $('.discountSelect input[type="checkbox"]');
-        checkboxes.change(function () {
-            var current = checkboxes.filter(":checked").length;
-            checkboxes.filter(":not(:checked)").prop("disabled", current >= max)
-        })
-    });
-    
-    $(".product-buttons-tab").tabs();
-    
-    
+           
     function playAudio() {
         var audio = $("#hoversound")[0];
         audio.play()
     }
-    $("#showNumPress").hide();
-    
-    if ($("input[name=sku]").blur()) {
-        $(".numKey").click(function(e){
-            e.preventDefault();
-            var keyVal = $(this).attr("id");
-            $("input[name=sku]").val($("input[name=sku]").val() + keyVal);
-             playAudio();
-            $("#numPress").text(keyVal);
-            $("input[name=sku]").trigger("change");
-        })
-        $("#clr").click(function(e){
-            e.preventDefault();
-            $("input[name=sku]").val("");
-            $("input[name=sku]").trigger("change")
-        })
-    }
-    
 
     $(function () {
         var buttons = $("a.trans-button");
@@ -581,42 +552,6 @@
             audio.play()
         })
     });
-
-    $("input[name=sku], input[name=cash], input[name=quantity], input[name=findSku], input[name=findDescription], input[name=transactionNo], .findItemFilter").focus(function () {
-        $("input[name=focusnotifier]").val("1")
-    }).blur(function () {
-        $("input[name=focusnotifier]").val("0")
-    });
-    
-    $('#checkAll').bind("mousedown change", function() {
-        if(!$(this).prop("checked")) {
-            $('.toggleEntryTax').each(function(){
-                $(this).prop("checked", true);
-                $(this).trigger("change");
-            })
-        }
-        else {
-            $('.toggleEntryTax').each(function(){
-                $(this).prop("checked", false);
-                $(this).trigger("change");
-            })
-        }
-    });
-
-    $('.toggleEntryTax').each(function(){
-        $(this).mousedown(function() {
-            if($(this).prop("checked", false)) {
-                $('#checkAll').prop("checked", false);
-            }
-            else {
-                var numChecked = $('input:checkbox:checked:not(#checkAll)').length;
-                var numTotal = $('input:checkbox:not(#checkAll)').length;
-                if(numTotal == numChecked) {
-                    $('#checkAll').prop("checked", true);
-                }
-            }
-        });
-    })
     
     $("#lockScreenDialog").dialog({
         title: "Screen Locked!",
@@ -700,23 +635,10 @@
     return false
 });
 
-$(document).keypress(function(e){var key=e.which;if($("input[name=focusnotifier]").val()=="0")switch(key){case 48:$("#0").trigger("click");$("#0").css("background","#444");setTimeout(function(){$("#0").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)","background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))",
-"background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 49:$("#1").trigger("click");$("#1").css("background","#444");setTimeout(function(){$("#1").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)","background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))",
-"background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 50:$("#2").trigger("click");$("#2").css("background","#444");setTimeout(function(){$("#2").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)","background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))",
-"background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 51:$("#3").trigger("click");$("#3").css("background","#444");setTimeout(function(){$("#3").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)","background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))",
-"background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 52:$("#4").trigger("click");$("#4").css("background","#444");setTimeout(function(){$("#4").css("background","#333")},100);break;case 53:$("#5").trigger("click");$("#5").css("background","#444");setTimeout(function(){$("#5").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)","background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)",
-"background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))","background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 54:$("#6").trigger("click");$("#6").css("background","#444");setTimeout(function(){$("#6").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)","background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)",
-"background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))","background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 55:$("#7").trigger("click");$("#7").css("background","#444");setTimeout(function(){$("#7").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)",
-"background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))","background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 56:$("#8").trigger("click");$("#8").css("background","#444");setTimeout(function(){$("#8").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)",
-"background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))","background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 57:$("#9").trigger("click");$("#9").css("background","#444");setTimeout(function(){$("#9").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)",
-"background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))","background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 249:$("#00").trigger("click");$("#00").css("background","#444");setTimeout(function(){$("#00").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)",
-"background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))","background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 13:$("#accept").trigger("click");$("#accept").css("background","#444");setTimeout(function(){$("#accept").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)",
-"background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))","background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;default:}});
-
 </script>
 <div class="cashier container_24">
     <div class="cashier-left">
-        <div class="cashier-first-column grid_12 alpha">
+        <div class="cashier-first-column grid_16 alpha">
             <div class="entered-items">
                 <div class="cashier-header"> 
                     <ul>
@@ -755,10 +677,6 @@ $(document).keypress(function(e){var key=e.which;if($("input[name=focusnotifier]
     </div>
     <div class="cashier-right">
         <div class="cashier-second-column grid_6">
-            <div class="item-detail">
-                <div id="placeholder">
-                    <img src="http://<?php echo $_SERVER["HTTP_HOST"]; ?>/template/images/no-image-available-cashier.png" id="itemImage"/>
-                </div>
                 <div class="custom-form">
 
                         <div>
@@ -768,40 +686,7 @@ $(document).keypress(function(e){var key=e.which;if($("input[name=focusnotifier]
                         </div>
                 </div>
             </div>
-
-            <div class="numpad">
-                <input type="hidden" name="focusnotifier" value="0"/>
-                <table>
-                    <tr>
-                        <td colspan="3"><input type="submit" name="enterItem" id="accept" form="itemEntryForm" value="ACCEPT"/></a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="#" class="numKey" id="7">7</a></td>
-                        <td><a href="#" class="numKey" id="8">8</a></td>
-                        <td><a href="#" class="numKey" id="9">9</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="#" class="numKey" id="4">4</a></td>
-                        <td><a href="#" class="numKey" id="5">5</a></td>
-                        <td><a href="#" class="numKey" id="6">6</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="#" class="numKey" id="1">1</a></td>
-                        <td><a href="#" class="numKey" id="2">2</a></td>
-                        <td><a href="#" class="numKey" id="3">3</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="#" class="numKey" id="0">0</a></td>
-                        <td><a href="#" class="numKey" id="00">00</a></td>
-                        <td><a href="#" id="clr">C</a></td>
-                    </tr>
-                </table>
-                <div id="showNumPress">
-                    <span id="numPress"></span>
-                </div>
-            </div>
-        </div>
-
+            
         <div class="cashier-third-column grid_6 omega">
             <div class="transaction-detail">
                 <div class="date-time-block">
