@@ -1605,5 +1605,10 @@
             mysql_query("UPDATE user_grouping_table SET user_group_id = '$group' WHERE user_id = '$user'") or die(mysql_error());
         }
     }
+    
+    function checkTransactionPendings($transNo){
+        $query = mysql_query("SELECT remarks FROM transaction_header WHERE transaction_no = '$transNo' AND remarks IN('Pending', 'OnHold')") or die(mysql_error());
+        return mysql_num_rows($query);
+    }
 
 ?>

@@ -27,7 +27,9 @@
 
 <script>
     $(document).ready(function () {
-    
+        
+    $("#itemEntryForm, .numpad").hide();    
+        
     function changeUrl(module){
         var object = {module: module};
         history.pushState(object, "", "?module=" + module)
@@ -74,12 +76,12 @@
         $("input[name=subTotal]").val(data.subtotal)
     });
     $.getJSON("/app/cashier/taxAmount.php?t=" + transaction, function (data) {
-        $("#summaryTax").text(data.totalTax)
+        $("input[name=summaryTax]").val(data.totalTax);
     });
     $.getJSON("/app/cashier/discount.php?t=" + transaction, function (data) {
         var totalDiscount = data.totalDiscount;
         $("input[name=totalDiscount]").val(totalDiscount);
-        $("#summaryDiscount").text(totalDiscount)
+        $("input[name=summaryDiscount]").val(totalDiscount)
     })
     $.getJSON("/app/cashier/getCustomer.php?t=" + transaction, function (data) {
         $("#activeCustomer").attr("data-code", data.code);
@@ -115,12 +117,12 @@
                     $("input[name=subTotal]").val(data.subtotal)
                 });
                 $.getJSON("/app/cashier/taxAmount.php?t=" + transaction, function (data) {
-                    $("#summaryTax").text(data.totalTax)
+                    $("input[name=summaryTax]").val(data.totalTax);
                 });
                 $.getJSON("/app/cashier/discount.php?t=" + transaction, function (data) {
                     var totalDiscount = data.totalDiscount;
                     $("input[name=totalDiscount]").val(totalDiscount);
-                    $("#summaryDiscount").text(totalDiscount)
+                    $("input[name=summaryDiscount]").val(totalDiscount)
                 })
                 $.ajax({
                     type: "POST",
@@ -167,18 +169,6 @@
         }
     });
     
-    $("#tenderSale").click(function () {
-        $("#tenderSaleDialog").dialog("open");
-        $("input[name=tenderSale]").attr("disabled", "disabled");
-        $("input[name=tenderSale]").val("Tendering Disabled");
-        var t = parseInt($("#transactionNo").text());
-        $("input[name=balance]").val("-" + $("input[name=hiddenTotalAmount]").val());
-        $.getJSON("/app/cashier/discount.php?t=" + t, function (data) {
-            var totalDiscount = data.totalDiscount;
-            $("input[name=totalDiscount]").val(totalDiscount);
-        })
-    });
-    
     $("#tenderSaleDialog").dialog({
         title: "Tender Sale",
         autoOpen: false,
@@ -191,6 +181,22 @@
         draggable: false
     });
     
+    $("#tenderSale").click(function () {
+        $.getJSON("/app/cashier/checkTransactionPendings.php?t=" + transaction, function(data){
+            if(data.pending != "0"){
+                $("#tenderSaleDialog").dialog("open");
+                $("input[name=tenderSale]").attr("disabled", "disabled");
+                $("input[name=tenderSale]").val("Tendering Disabled");
+                var t = parseInt($("#transactionNo").text());
+                $("input[name=balance]").val("-" + $("input[name=hiddenTotalAmount]").val());
+                $.getJSON("/app/cashier/discount.php?t=" + t, function (data) {
+                    var totalDiscount = data.totalDiscount;
+                    $("input[name=totalDiscount]").val(totalDiscount);
+                })
+            }
+        })
+    });
+
     $("#printReceiptDialog").dialog({
         autoOpen: false,
         title: "Print Receipt",
@@ -203,13 +209,13 @@
                 $("#printReceiptDialog").dialog("close");
                 setTimeout(function () {
                     window.location.href = "/"
-                }, 1E3)
+                }, 2000)
             },
             "Cancel": function(){
                 $(this).dialog("close");
                 setTimeout(function () {
                     window.location.href = "/"
-                }, 1E3)
+                }, 2000)
             }
         }
     })
@@ -245,31 +251,35 @@
     
     $("#cancelTransaction").unbind("click").click(function(e) {
         e.preventDefault();
-        $(this).attr("disabled", "disabled");
-        var transaction = parseInt($("#transactionNo").text());
-        var subTotal = $("input[name=subTotal]").val();
-        var discountAmount = parseFloat($("input[name=totalDiscount]").val()).toFixed(2);
-        var totalAmount = $("input[name=hiddenTotalAmount]").val();
-        $.ajax({
-            type: "POST",
-            url: "/app/cashier/cancel.php",
-            data: {
-                transaction: transaction,
-                subTotal: subTotal,
-                discountAmount: discountAmount,
-                totalAmount: totalAmount
-            },
-            success: function () {
-                $.uinotify({
-                    "text": "Transaction # " + transaction + " cancelled",
-                    "duration": 3E3
-                });
-                setTimeout(function () {
-                    window.location.href = "/"
-                }, 3500)
+        $.getJSON("/app/cashier/checkTransactionPendings.php?t=" + transaction, function(data){
+            if(data.pending != "0"){
+                $(this).attr("disabled", "disabled");
+                var transaction = parseInt($("#transactionNo").text());
+                var subTotal = $("input[name=subTotal]").val();
+                var discountAmount = parseFloat($("input[name=totalDiscount]").val()).toFixed(2);
+                var totalAmount = $("input[name=hiddenTotalAmount]").val();
+                $.ajax({
+                    type: "POST",
+                    url: "/app/cashier/cancel.php",
+                    data: {
+                        transaction: transaction,
+                        subTotal: subTotal,
+                        discountAmount: discountAmount,
+                        totalAmount: totalAmount
+                    },
+                    success: function () {
+                        $.uinotify({
+                            "text": "Transaction # " + transaction + " cancelled",
+                            "duration": 3E3
+                        });
+                        setTimeout(function () {
+                            window.location.href = "/"
+                        }, 2000)
+                    }
+                })
             }
         })
-    });
+    })
     
     $("#closeStore").click(function () {
         $("#closeStoreDialog").dialog("open");
@@ -290,41 +300,35 @@
     
     $("#holdTransaction").unbind("click").click(function(e) {
         e.preventDefault();
-        $(this).attr("disabled", "disabled");
-        var transaction = parseInt($("#transactionNo").text());
-        var subTotal = $("input[name=subTotal]").val();
-        var taxAmount = $("#summaryTax").text();
-        var discountAmount = parseFloat($("input[name=totalDiscount]").val()).toFixed(2);
-        var totalAmount = $("input[name=hiddenTotalAmount]").val();
-        $.ajax({
-            type: "POST",
-            url: "/app/cashier/hold.php",
-            data: {
-                transaction: transaction,
-                subTotal: subTotal,
-                taxAmount: taxAmount,
-                discountAmount: discountAmount,
-                totalAmount: totalAmount
-            },
-            success: function () {
-                $.uinotify({
-                    "text": "Transaction # " + transaction + " on hold",
-                    "duration": 3E3
-                });
-                setTimeout(function () {
-                    window.location.href = "/"
-                }, 3500)
+        $.getJSON("/app/cashier/checkTransactionPendings.php?t=" + transaction, function(data){
+            if(data.pending != "0"){
+                $(this).attr("disabled", "disabled");
+                var transaction = parseInt($("#transactionNo").text());
+                var subTotal = $("input[name=subTotal]").val();
+                var taxAmount = $("#summaryTax").text();
+                var discountAmount = parseFloat($("input[name=totalDiscount]").val()).toFixed(2);
+                var totalAmount = $("input[name=hiddenTotalAmount]").val();
+                $.ajax({
+                    type: "POST",
+                    url: "/app/cashier/hold.php",
+                    data: {
+                        transaction: transaction,
+                        subTotal: subTotal,
+                        taxAmount: taxAmount,
+                        discountAmount: discountAmount,
+                        totalAmount: totalAmount
+                    },
+                    success: function () {
+                        $.uinotify({
+                            "text": "Transaction # " + transaction + " on hold",
+                            "duration": 3E3
+                        });
+                        setTimeout(function () {
+                            window.location.href = "/"
+                        }, 2000)
+                    }
+                })
             }
-        })
-    });
-    
-    $("#findItem").click(function () {
-        $(".dataTables_filter input:text").addClass("findItemFilter");
-        $("#findItemDialog").dialog("open");
-        $("#itemsTable").dataTable({
-            "sPaginationType": "full_numbers",
-            "bJQueryUI": true,
-            "bRetrieve":true
         });
     });
     
@@ -339,6 +343,17 @@
         buttons: false,
         draggable: true
     });
+    
+    $("#findItem").click(function () {
+        $(".dataTables_filter input:text").addClass("findItemFilter");
+        $("#findItemDialog").dialog("open");
+        $("#itemsTable").dataTable({
+            "sPaginationType": "full_numbers",
+            "bJQueryUI": true,
+            "bRetrieve":true
+        });
+    });
+       
     $(".addItemToEntry").unbind("click").click(function(){
         var sku = $(this).attr("data-sku");
         $("input[name=sku]").val(sku);
@@ -490,12 +505,12 @@
                     $("input[name=subTotal]").val(data.subtotal)
                 });
                 $.getJSON("/app/cashier/taxAmount.php?t=" + transaction, function (data) {
-                    $("#summaryTax").text(data.totalTax)
+                    $("input[name=summaryTax]").val(data.totalTax);
                 });
                 $.getJSON("/app/cashier/discount.php?t=" + transaction, function (data) {
                     var totalDiscount = data.totalDiscount;
                     $("input[name=totalDiscount]").val(totalDiscount);
-                    $("#summaryDiscount").text(totalDiscount)
+                    $("input[name=summaryDiscount]").val(totalDiscount)
                 })
             }
         })
@@ -529,12 +544,12 @@
                     $("input[name=subTotal]").val(data.subtotal)
                 });
                 $.getJSON("/app/cashier/taxAmount.php?t=" + transaction, function (data) {
-                    $("#summaryTax").text(data.totalTax)
+                    $("input[name=summaryTax]").val(data.totalTax);
                 });
                 $.getJSON("/app/cashier/discount.php?t=" + transaction, function (data) {
                     var totalDiscount = data.totalDiscount;
                     $("input[name=totalDiscount]").val(totalDiscount);
-                    $("#summaryDiscount").text(totalDiscount)
+                    $("input[name=summaryDiscount]").val(totalDiscount)
                 })
             }
         })
@@ -629,42 +644,82 @@
 
     setInterval(function(){ // Time will be updated
         $("#clock").html(getTime())
-    }, 500);
+    }, 1000);
     /* ------------------------------------------------- */
-
-    return false
+    
+    $("input[name=sku], input[name=cash], input[name=quantity], input[name=findSku], input[name=findDescription], input[name=transactionNo], .findItemFilter").focus(function() {
+        $("input[name=focusnotifier]").val("1")
+    }).blur(function() {
+        $("input[name=focusnotifier]").val("0")
+    });
+    
+    if ($("input[name=sku]").blur()) {
+        $(".numKey").click(function(e){
+            e.preventDefault();
+            var keyVal = $(this).attr("id");
+            $("input[name=sku]").val($("input[name=sku]").val() + keyVal);
+             playAudio();
+            $("#numPress").text(keyVal);
+            $("input[name=sku]").trigger("change");
+        })
+        $("#clr").click(function(e){
+            e.preventDefault();
+            $("input[name=sku]").val("");
+            $("input[name=sku]").trigger("change")
+        })
+    }
+    
 });
 
+$(document).keypress(function(e){var key=e.which;if($("input[name=focusnotifier]").val()=="0")switch(key){case 48:$("#0").trigger("click");$("#0").css("background","#444");setTimeout(function(){$("#0").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)","background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))",
+"background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 49:$("#1").trigger("click");$("#1").css("background","#444");setTimeout(function(){$("#1").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)","background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))",
+"background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 50:$("#2").trigger("click");$("#2").css("background","#444");setTimeout(function(){$("#2").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)","background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))",
+"background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 51:$("#3").trigger("click");$("#3").css("background","#444");setTimeout(function(){$("#3").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)","background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))",
+"background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 52:$("#4").trigger("click");$("#4").css("background","#444");setTimeout(function(){$("#4").css("background","#333")},100);break;case 53:$("#5").trigger("click");$("#5").css("background","#444");setTimeout(function(){$("#5").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)","background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)",
+"background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))","background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 54:$("#6").trigger("click");$("#6").css("background","#444");setTimeout(function(){$("#6").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)","background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)",
+"background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))","background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 55:$("#7").trigger("click");$("#7").css("background","#444");setTimeout(function(){$("#7").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)",
+"background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))","background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 56:$("#8").trigger("click");$("#8").css("background","#444");setTimeout(function(){$("#8").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)",
+"background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))","background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 57:$("#9").trigger("click");$("#9").css("background","#444");setTimeout(function(){$("#9").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)",
+"background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))","background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 249:$("#00").trigger("click");$("#00").css("background","#444");setTimeout(function(){$("#00").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)",
+"background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))","background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;case 13:$("#accept").trigger("click");$("#accept").css("background","#444");setTimeout(function(){$("#accept").css({"background-image":"linear-gradient(to bottom, #383838 0%, #2F2F2F 100%)",
+"background-image":"-ms-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-moz-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-o-linear-gradient(top, #383838 0%, #2F2F2F 100%)","background-image":"-webkit-gradient(linear, left top, left bottom, color-stop(0, #383838), color-stop(1, #2F2F2F))","background-image":"-webkit-linear-gradient(top, #383838 0%, #2F2F2F 100%)"})},100);break;default:}});
 </script>
-<div class="cashier container_24">
-    <div class="cashier-left">
-        <div class="cashier-first-column grid_16 alpha">
-            <div class="entered-items">
-                <div class="cashier-header"> 
-                    <ul>
-                        <li><span id="cashier-header-description">Description</span></li>
-                        <li><span id="cashier-header-qty">Qty</span></li>
-<!--                        <li><span id="cashier-header-tax">Tax&nbsp;<input type="checkbox" id="checkAll"/></span></li>-->
-                        <li><span id="cashier-header-amount">Amount</span></li>
-                        <li><span id="cashier-header-action">&nbsp;</span></li>
-                    </ul>
-                </div>
-                <input type="hidden" name="hiddenTotalAmount"/>
-                <div class="clear"></div>
-                <div class="cashier-entered-items">
-
-                </div>
-                <input type="hidden" name="dd9ac57b5bdcdd04b763c7d0675269bf" value="<?php echo $lockStatus;  ?>"/>
-                <input type="hidden" id="idHolder" value=""/>
-                <input type="hidden" id="transNoHolder" value=""/>
-            </div>
-            <div class="clear"></div>
-            <div class="transaction-operations grid_12 alpha">
+<!-- primary start -->
+<div class="primary_wrapper">
+<!-- primary top start -->
+<div class="primary_top">
+    <div class="header_item_label">
+        <ul>
+            <li><label class="item" for="item">Item</label></li>
+            <li><label class="qty" for="qty">Qty</label></li>
+            <li><label class="amount" for="amount">Amount</label></li>
+        </ul>
+    </div>
+    <!-- item details start -->
+    <div class="content_item_details">
+        <div class="sepa"></div>
+        <div class="cashier-entered-box">
+            <div class="cashier-entered-items"></div>
+        </div>
+    </div>
+        <!-- item details end -->
+</div>
+        <input type="hidden" name="dd9ac57b5bdcdd04b763c7d0675269bf" value="<?php echo $lockStatus;  ?>"/>
+        <div class="primary_bottom">
+            <div class="pb_button">
                 <ul>
-                    <li><button class="first trans-button" id="findItem"></button></li>
-                    <li><button class="trans-button" id="returnTransaction"></button></li>
-                    <li><button class="trans-button" id="cancelTransaction"></button></li>
-                    <li><button class="trans-button" id="holdTransaction"></button></li>
+                    <li class="find">
+                        <a href="#" id="findItem">Find</a>
+                    </li>
+                    <li class="return">
+                        <a href="#" id="returnTransaction">Return</a>
+                    </li>
+                    <li class="cancel">
+                        <a href="#" id="cancelTransaction">Cancel</a>
+                    </li>
+                    <li class="hold">
+                        <a href="#" id="holdTransaction">Hold</a>
+                    </li>
                 </ul>
                 <div class="sounds">
                     <audio id="hoversound">
@@ -673,55 +728,72 @@
                     </audio>
                 </div>
             </div>
+    </div>
+<!-- primary bottom end -->
+</div>
+<div class="secondary_wrapper">
+    <div class="trans_value">
+        <div class="transaction">
+            <div class="transaction_label">Transaction no.</div>
+            <div class="transaction_number"><span id="transactionNo"><?php echo $transNo; ?></span></div>	
+        </div>
+        <div class="total_transaction">
+            <label for="tax" class="tax_label">Tax</label>
+            <input type="text" readonly="readonly" name="summaryTax"  value="0.00" />
+            <div class="clear"></div>
+            <label for="Discount" class="discount_label">Discount</label>
+            <input type="text" readonly="readonly" name="summaryDiscount" value="0.00" />
+        </div>
+        <div class="total_transaction_amount">
+            <span id="totalAmount">P 0.00</span>
         </div>
     </div>
-    <div class="cashier-right">
-        <div class="cashier-second-column grid_6">
-                <div class="custom-form">
-
-                        <div>
-                            <form method="post" action="" id="itemEntryForm">
-                                <input type="text" id="sku" name="sku" placeholder="enter item code"/>
-                            </form>
-                        </div>
-                </div>
-            </div>
-            
-        <div class="cashier-third-column grid_6 omega">
-            <div class="transaction-detail">
-                <div class="date-time-block">
-                    <span><?php echo date("F d, Y"); ?></span>
-                    <span id="clock">24:00:00</span>
-                </div>
-                <div class="transaction-number-block">
-                    <span class="trans-number" id="transactionNo"><?php echo $transNo; ?></span>
-                    <span>Transaction no</span>
-                </div>
-                <div class="customer-transaction-block">
-                    <span id="activeCustomer">Customer not set</span>
-                    <span>Customer</span>
-                </div>
-                <div class="transaction-tax-disc-block">
-                    <span class="trans-inline-title">Tax</span><span id="summaryTax" class="trans-inline-value">0.00</span><br/>
-                    <span class="trans-inline-title">Discount</span><span id="summaryDiscount" class="trans-inline-value">0.00</span>
-                </div>
-                <div class="transaction-total-amount-block">
-                    <span id="totalAmount">P 0.00</span>
-                </div>
-                <div class="tenderSaleButtonHolder">
-                    <a href="#" class="tenderSaleButton trans-button" id="tenderSale"></a>
-                </div>
-            </div>
-            <div class="store-operations">
-                <ul>
-                    <li><a href="#" id="setCustomer"></a></li>
-                    <li><a href="#" id="openCloseStore"></a></li>
-                    <li><a href="#" id="openCloseDrawer"></a></li>
-                    <li><a href="#" id="payout"></a></li>
-                    <li><a href="#" id="lockScreen"></a></li>
-                </ul>
-            </div>
-        </div>
+    <div class="clear"></div>
+    <div class="tender_sale">
+        <img src="http://<?php echo ROOT; ?>/template/images/tender_sale_icon.png" />
+        <a href="#" class="tenderSaleButton" id="tenderSale">Tender Sale</a></li>
+    </div>
+    <div class="buttons">
+        <ul>
+            <li><a href="#" class="set_customer" id="setCustomer">Set Customers</a></li>
+            <li><a href="#" class="close_store" id="openCloseStore">Close Store</a></li>
+            <li><a href="#" class="open_drawer" id="openCloseDrawer">Open Drawer</a></li>
+            <li><a href="#" class="payout" id="payout">Payout</a></li>
+        </ul>
+    </div>
+</div>
+<form method="post" action="" id="itemEntryForm">
+    <input type="text" id="sku" name="sku" placeholder="enter item code"/>
+</form>
+<div class="numpad">
+    <input type="hidden" name="focusnotifier" value="0"/>
+    <table>
+        <tr>
+            <td colspan="3"><input type="submit" name="enterItem" id="accept" form="itemEntryForm" value="ACCEPT"/></a></td>
+        </tr>
+        <tr>
+            <td><a href="#" class="numKey" id="7">7</a></td>
+            <td><a href="#" class="numKey" id="8">8</a></td>
+            <td><a href="#" class="numKey" id="9">9</a></td>
+        </tr>
+        <tr>
+            <td><a href="#" class="numKey" id="4">4</a></td>
+            <td><a href="#" class="numKey" id="5">5</a></td>
+            <td><a href="#" class="numKey" id="6">6</a></td>
+        </tr>
+        <tr>
+            <td><a href="#" class="numKey" id="1">1</a></td>
+            <td><a href="#" class="numKey" id="2">2</a></td>
+            <td><a href="#" class="numKey" id="3">3</a></td>
+        </tr>
+        <tr>
+            <td><a href="#" class="numKey" id="0">0</a></td>
+            <td><a href="#" class="numKey" id="00">00</a></td>
+            <td><a href="#" id="clr">C</a></td>
+        </tr>
+    </table>
+    <div id="showNumPress">
+        <span id="numPress"></span>
     </div>
 </div>
 

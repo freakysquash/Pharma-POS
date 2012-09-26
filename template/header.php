@@ -55,81 +55,82 @@
                 }
                 
                 var module = $(document).getUrlParam("module");
+                var page = $(document).getUrlParam("page");
+                if(module == "manage" && page == "inventory"){
+                    $(".main-menu").removeClass("current");
+                    $("#inventoryMenu").addClass("current");
+                }
+                else if(module == "manage"){
+                    $(".main-menu").removeClass("current");
+                    $("#managerMenu").addClass("current");
+                }
                 switch(module){
                     case "cashier":
-                        $(".main-menu").removeClass("main-menu-active");
-                        $("#cashierMenu").addClass("main-menu-active");
+                        $(".main-menu").removeClass("current");
+                        $("#cashierMenu").addClass("current");
                         break;
                     case "transactions":
-                        $(".main-menu").removeClass("main-menu-active");
-                        $("#transactionsMenu").addClass("main-menu-active");
-                        break;
-                    case "inventory":
-                        $(".main-menu").removeClass("main-menu-active");
-                        $("#inventoryMenu").addClass("main-menu-active");
+                        $(".main-menu").removeClass("current");
+                        $("#transactionsMenu").addClass("current");
                         break;
                     case "customers":
-                        $(".main-menu").removeClass("main-menu-active");
-                        $("#customersMenu").addClass("main-menu-active");
+                        $(".main-menu").removeClass("current");
+                        $("#customersMenu").addClass("current");
                         break;
                     case "reports":
-                        $(".main-menu").removeClass("main-menu-active");
-                        $("#reportsMenu").addClass("main-menu-active");
-                        break;
-                    case "manage":
-                        $(".main-menu").removeClass("main-menu-active");
-                        $("#managerMenu").addClass("main-menu-active");
+                        $(".main-menu").removeClass("current");
+                        $("#reportsMenu").addClass("current");
                         break;
                     default:
                         
                 }
-                
+
             })
         </script>
     </head>
     <body>    
         <div id="container">
-			<div id="header_wrapper">
-				<div id="header">
-					<div class="header_top">
-						<div class="logo">Point of Sale</div> <!-- Point of Sale logo -->
-						<!-- navigation start -->
-						<div class="nav">
+            <div id="header_wrapper">
+                <div id="header">
+                    <div class="header_top">
+                        <div class="logo">Point of Sale</div> <!-- Point of Sale logo -->
+                        <!-- navigation start -->
+                        <div class="nav">
                             <?php
                                 if(isset($_SESSION["userId"])){
                             ?>
-							<ul>
-								<li class="current"><a href="/?module=cashier">Cashier</a></li>
-								<li><a href="/?module=transactions">Transactions</a></li>
-								<li><a href="/?module=manage&page=inventory">Inventory</a></li>
-								<li><a href="/?module=customers">Customers</a></li>
-								<li><a href="/?module=reports">Reports</a></li>
-								<li><a href="/?module=manage">Manager</a></li>
-							</ul>
+                                <ul>
+                                    <li class="current main-menu" id="cashierMenu"><a href="/?module=cashier">Cashier</a></li>
+                                    <li class="current main-menu" id="transactionsMenu"><a href="/?module=transactions">Transactions</a></li>
+                                    <li class="current main-menu" id="inventoryMenu"><a href="/?module=manage&page=inventory">Inventory</a></li>
+                                    <li class="current main-menu" id="customersMenu"><a href="/?module=customers">Customers</a></li>
+                                    <li class="current main-menu" id="reportsMenu"><a href="/?module=reports">Reports</a></li>
+                                    <li class="current main-menu" id="managerMenu"><a href="/?module=manage">Manager</a></li>
+                                </ul>
                              <?php
                                 }
                             ?>
-						</div>
-						<!-- navigation end -->
-					</div>
-					<div class="header_bottom">
-						<h1 class="title"><?php if(isset($_SESSION["userId"])){ echo getCompanyName(); } ?></h1>
-						<div class="user_action ">
-                            <?php
-                                if(isset($_SESSION["userId"])){
-                            ?>
-							<ul>
-								<li><a href="#" id="c8f717eee724806566e3ec2a90e07779"><?php echo $_SESSION["username"]; ?></a></li> <!-- User -->
-								<li><a href="http://<?php echo ROOT; ?>/app/users/logout.php" id="logout">Logout</a></li> <!-- Logout -->
-							</ul>
-                            <?php
-                                }
-                            ?>
-						</div>
-					</div>
-					<!-- navigation end -->
-				</div>
-			</div>
-			<!-- body content start -->
-			<div class="content_wrapper">
-				<div class="content">
+                        </div>
+                        <!-- navigation end -->
+                </div>
+                <div class="header_bottom">
+                    <h1 class="title"><?php if(isset($_SESSION["userId"])){ echo getCompanyName(); } ?></h1>
+                    <div class="user_action ">
+                        <?php
+                            if(isset($_SESSION["userId"])){
+                        ?>
+                        <ul>
+                            <li><a href="#" id="c8f717eee724806566e3ec2a90e07779"><?php echo $_SESSION["username"]; ?></a></li> <!-- User -->
+                            <li><a href="http://<?php echo ROOT; ?>/app/users/logout.php" id="logout">Logout</a></li> <!-- Logout -->
+                        </ul>
+                        <?php
+                            }
+                        ?>
+                    </div>
+                </div>
+                    <!-- navigation end -->
+            </div>
+        </div>
+        <!-- body content start -->
+        <div class="content_wrapper">
+            <div class="content">

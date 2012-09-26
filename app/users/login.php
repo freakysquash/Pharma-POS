@@ -32,41 +32,12 @@
 
 <script>
     $(document).ready(function(){
-        $(".content-block").css({"box-shadow":"none", "border":"none", "background":"none"});
+        $(".content").css({"box-shadow":"none", "border":"none", "background":"none"});
     })
 </script>
 
-<div id="login" class="grid_20 push_2 alpha">
-    <div class="grid_18 push_1 alpha" id="greet">
-        <span>Welcome</span>
-    </div>
-    <div class="clear"></div>
-    <div class="grid_10 push_1 alpha" id="features">
-        <div id="promote">myPharmaPOS is the simplest way to avail a smarter Pharmaceutical Point of Sale solution.</div>
-        <div class="clear"></div>
-        <div class="stats">
-            <div class="grid_2 alpha"><img src="http://<?php echo ROOT; ?>/template/images/browser.png"/></div>
-            <div class="grid_8 omega">
-                <span class="stat-title">Web based</span>
-                <p>Donec ut est mauris. Aliquam erat volutpat. Ut ligula erat, dictum vel pulvinar porta, aliquam sed felis.</p>
-            </div>
-        </div>
-        <div class="stats">
-            <div class="grid_2 alpha"><img src="http://<?php echo ROOT; ?>/template/images/browser.png"/></div>
-            <div class="grid_8 omega">
-                <span class="stat-title">Web based</span>
-                <p>Donec ut est mauris. Aliquam erat volutpat. Ut ligula erat, dictum vel pulvinar porta, aliquam sed felis.</p>
-            </div>
-        </div>
-        <div class="stats">
-            <div class="grid_2 alpha"><img src="http://<?php echo ROOT; ?>/template/images/browser.png"/></div>
-            <div class="grid_8 omega">
-                <span class="stat-title">Web based</span>
-                <p>Donec ut est mauris. Aliquam erat volutpat. Ut ligula erat, dictum vel pulvinar porta, aliquam sed felis.</p>
-            </div>
-        </div>
-    </div>
-    <div class="grid_8 push_1 omega" id="login-form">
+<div id="login">
+    <div id="login-form">
         <form method="post">
             <span>Login Account</span>
             <div>
